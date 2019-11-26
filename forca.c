@@ -22,18 +22,17 @@ int end = 0;
 char word[256];
 char cWord[256];
 
-void readWord(){
-    FILE *f;
-    char c;
-    int i = 0;
-    f = fopen("palavra.txt","rt");
-    while((c = fgetc(f)) != EOF){
-        word[i] = c;
-        i++;
-    }
-    word[i] = '\0';
-    fclose(f);
+void readFile(){
+    FILE *p;
+    p = fopen("segredo.txt","r");
+    if(p == NULL)
+        printf("nao foi possivel abrir o arquivo\n");
+    fscanf(p, " %[^\n]", word);
+    fclose(p);
+    printf("%s", word);
+
 }
+
 
 
 void renderBase(){
@@ -127,7 +126,7 @@ void start(){
     mvprintw(7,5, "é só ir digitando, ela não vai aparecer aqui no terminal");
     mvprintw(8,5, "assim seu amigo não vê (;");
     mvprintw(6,5, "Palavra: ");
-    scanw(" %[^\n]",word);
+    readFile();
     refresh();
     clear();
 }
@@ -135,24 +134,23 @@ void start(){
 
 int main(){
     int charVal, quit = 0;
-        initscr();
-        noecho();
-        start_color();
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
-        init_pair(2, COLOR_BLACK, COLOR_RED);
-        init_pair(3, COLOR_BLUE, COLOR_BLACK);
-        init_pair(4, COLOR_RED,COLOR_BLACK);
-        init_pair(5, COLOR_GREEN, COLOR_BLACK);
+    initscr();
+    noecho();
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+    init_pair(2, COLOR_BLACK, COLOR_RED);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    init_pair(4, COLOR_RED,COLOR_BLACK);
+    init_pair(5, COLOR_GREEN, COLOR_BLACK);
     do{
 
         attron(COLOR_PAIR(1));
         attempts = 0;
         end = 0;
         start();
-        // readWord();
         renderBase();
         renderWord();
-        while(attempts <= 6 && end == 0){
+        while(attempts < 6 && end == 0){
             charVal = getch();
             if(isalpha(charVal)){
                 checkWord(charVal);
@@ -160,7 +158,7 @@ int main(){
             }
         }
 
-        if(attempts <= 6 && end == 1){
+        if(attempts < 6 && end == 1){
             mvprintw(5,15, "Você salvou a vida do amiguinho ali");
             refresh();
         }else{
